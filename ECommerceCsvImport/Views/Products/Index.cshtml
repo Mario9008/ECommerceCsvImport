@@ -1,0 +1,75 @@
+﻿@using ECommerceCsvImport.Models
+@model ProductsIndexViewModel
+@{
+    ViewData["Title"] = "Список товаров";
+}
+
+<h1>Товары</h1>
+
+<form method="get" asp-action="Index" class="mb-3 d-flex">
+    <input type="text" name="searchString" value="@Model.SearchString" class="form-control me-2" placeholder="Поиск по названию или артикулу..." />
+    <button type="submit" class="btn btn-outline-primary">Найти</button>
+    @if (!string.IsNullOrEmpty(Model.SearchString))
+    {
+        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Сбросить</a>
+    }
+</form>
+
+<p>Всего товаров: @Model.TotalCount</p>
+<p>Общая стоимость: @Model.TotalValue.ToString("N0") RUB</p>
+
+@if (Model.Products.Count == 0)
+{
+    <div class="alert alert-info">
+        @if (!string.IsNullOrEmpty(Model.SearchString))
+        {
+            <span>По запросу "@Model.SearchString" ничего не найдено.</span>
+        }
+        else
+        {
+            <span>Товары еще не импортированы.</span>
+        }
+    </div>
+
+    <a asp-action="Import" class="btn btn-primary mt-3">Импортировать товары</a>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Артикул</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Цена</th>
+                <th>Валюта</th>
+                <th>Категория</th>
+                <th>Остаток</th>
+                <th>Активен</th>
+                <th>Бренд</th>
+                <th>Гарантия, мес.</th>
+                <th>Модель</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.Sku</td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price.ToString("N0")</td>
+                    <td>@product.Currency</td>
+                    <td>@product.CategoryName</td>
+                    <td>@product.StockQuantity</td>
+                    <td>@(product.IsActive ? "Да" : "Нет")</td>
+                    <td>@product.Brand</td>
+                    <td>@product.WarrantyMonths</td>
+                    <td>@product.ModelNumber</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Import" class="btn btn-primary mt-3">Импортировать товары</a>
+}
